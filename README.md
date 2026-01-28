@@ -1,16 +1,53 @@
-# React + Vite
+# Coord.io
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web-based tool for converting geographic coordinates between various formats, featuring bulk processing and map visualization. Built with React and Vite.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Coordinate Conversion**: Convert between Latitude/Longitude (Decimal Degrees, DMS) and Projected Coordinate Systems (UTM, TM3).
+- **Bulk Processing**: Import Excel/CSV files to convert multiple coordinates at once.
+- **Map Visualization**: accurate map preview using Leaflet.
+- **Export**: Download converted results.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React, Vite
+- **Map**: Leaflet, React-Leaflet
+- **Math/Projections**: Proj4, proj4js
+- **Data Handling**: SheetJS (xlsx)
+- **Styling**: CSS
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+
+- Node.js (v14 or higher recommended)
+- npm
+
+### Installation
+
+1.  Clone the repository:
+
+    ```bash
+    git clone https://github.com/13wejay/coord-io.git
+    cd coord-io
+    ```
+
+2.  Install dependencies:
+
+    ```bash
+    npm install
+    ```
+
+3.  Start the development server:
+    ```bash
+    npm run dev
+    ```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Author
+
+Muhammad Ramadhani Wijayanto
