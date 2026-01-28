@@ -1,0 +1,95 @@
+/* Location Card Styles */
+.location-card {
+  padding: var(--spacing-lg);
+  animation: slideUp 0.4s ease-out;
+}
+
+.location-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.location-card-icon {
+  font-size: 20px;
+}
+
+.location-card-format {
+  font-size: var(--font-size-sm);
+  color: var(--accent-teal);
+  font-weight: 500;
+}
+
+.location-card-result {
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Consolas', monospace;
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.3);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  word-break: break-all;
+  line-height: 1.6;
+  margin-bottom: var(--spacing-lg);
+}
+
+.location-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.action-btn:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
+  color: var(--text-primary);
+}
+
+.action-btn.success {
+  background: rgba(20, 184, 166, 0.2);
+  border-color: var(--accent-teal);
+  color: var(--accent-teal);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .location-card-result {
+    font-size: var(--font-size-base);
+  }
+  
+  .location-card-actions {
+    flex-direction: column;
+  }
+  
+  .action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

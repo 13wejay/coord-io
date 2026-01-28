@@ -1,0 +1,32 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mainGradient" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366f1" /> <stop offset="100%" stop-color="#14b8a6" /> </linearGradient>
+    
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="120" fill="#0f172a" />
+
+  <g transform="translate(64, 64) scale(0.75)" filter="url(#glow)">
+    
+    <path d="M256 32 C 150 32, 128 256, 128 256 S 150 480, 256 480" 
+          stroke="url(#mainGradient)" stroke-width="32" stroke-linecap="round" fill="none" opacity="0.6"/>
+    <path d="M256 32 C 362 32, 384 256, 384 256 S 362 480, 256 480" 
+          stroke="url(#mainGradient)" stroke-width="32" stroke-linecap="round" fill="none" opacity="0.6"/>
+    
+    <path d="M32 256 H 480" 
+          stroke="url(#mainGradient)" stroke-width="32" stroke-linecap="round" opacity="0.4"/>
+
+    <path d="M256 32 A 224 224 0 0 1 480 256" 
+          stroke="url(#mainGradient)" stroke-width="40" stroke-linecap="round" fill="none" />
+    <path d="M256 480 A 224 224 0 0 1 32 256" 
+          stroke="url(#mainGradient)" stroke-width="40" stroke-linecap="round" fill="none" />
+
+    <circle cx="256" cy="256" r="48" fill="#fff" />
+    <circle cx="256" cy="256" r="24" fill="#6366f1" />
+  </g>
+</svg>

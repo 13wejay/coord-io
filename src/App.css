@@ -1,0 +1,35 @@
+/* App Component Styles */
+
+.app {
+  /* Fixed height layout to prevent window scroll */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1;
+  overflow: hidden;
+  padding: 0;
+}
+
+.footer {
+  padding: var(--spacing-lg) var(--spacing-xl);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  border-top: 1px solid var(--glass-border);
+  background: var(--bg-primary); 
+  position: relative;
+  z-index: 10;
+}
+
+.footer a {
+  color: var(--accent-cyan);
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}

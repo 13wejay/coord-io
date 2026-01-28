@@ -1,0 +1,80 @@
+/* Export Button Styles */
+.export-button-container {
+  position: relative;
+  display: inline-block;
+}
+
+.export-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chevron {
+  font-size: 10px;
+  transition: transform var(--transition-fast);
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+.export-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  padding: var(--spacing-sm);
+  z-index: 100;
+  animation: dropdownFadeIn 0.2s ease-out;
+}
+
+.export-option {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  text-align: left;
+}
+
+.export-option:hover {
+  background: var(--glass-bg-hover);
+}
+
+.export-icon {
+  font-size: 20px;
+}
+
+.export-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.export-format {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.export-desc {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
