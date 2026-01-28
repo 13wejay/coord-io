@@ -1,4 +1,5 @@
 import { COORDINATE_FORMATS } from '../../utils/coordinateUtils';
+import UiDropdown from '../UiDropdown/UiDropdown';
 import './FormatSelector.css';
 
 const FormatSelector = ({ 
@@ -12,21 +13,16 @@ const FormatSelector = ({
 
   return (
     <div className="format-selector">
-      <label className="label" htmlFor={id}>
-        {label}
-      </label>
-      <select
+      <UiDropdown
+        label={label}
         id={id}
-        className="format-select"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        {COORDINATE_FORMATS.map((format) => (
-          <option key={format.id} value={format.id}>
-            {format.name} ({format.id})
-          </option>
-        ))}
-      </select>
+        onChange={onChange}
+        options={COORDINATE_FORMATS.map(f => ({
+          value: f.id,
+          label: `${f.name} (${f.id})`
+        }))}
+      />
       {showExample && selectedFormat && (
         <span className="format-example">
           e.g., {selectedFormat.example}

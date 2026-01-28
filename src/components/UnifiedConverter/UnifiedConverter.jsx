@@ -16,6 +16,7 @@ import LocationCard from '../LocationCard/LocationCard';
 import DataGrid from '../DataGrid/DataGrid';
 import ExportButton from '../ExportButton/ExportButton';
 import FormatSelector from '../FormatSelector/FormatSelector';
+import HistoryList from '../HistoryList/HistoryList';
 import './UnifiedConverter.css';
 
 const UnifiedConverter = () => {
@@ -29,6 +30,31 @@ const UnifiedConverter = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
+  const [history, setHistory] = useState(() => {
+    try {
+      const saved = localStorage.getItem('conversionHistory');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('conversionHistory', JSON.stringify(history));
+  }, [history]);
+
+  const addToHistory = (resultObj) => {
+    setHistory(prev => {
+      const newEntry = {
+        ...resultObj,
+        timestamp: Date.now(),
+        toFormat
+      };
+      // Keep last 5
+      const newHistory = [newEntry, ...prev].slice(0, 5);
+      return newHistory;
+    });
+  };
   
   // Drag and drop state
   const [isDragOver, setIsDragOver] = useState(false);
@@ -140,12 +166,16 @@ const UnifiedConverter = () => {
           coords = { lat: mapCoordinates[0].lat, lng: mapCoordinates[0].lng };
         }
         
-        setResults({
+        const resultObj = {
           type: 'single',
           result: converted,
           original: input.trim(),
-          coordinates: coords
-        });
+          coordinates: coords,
+          fromFormat: format
+        };
+        
+        setResults(resultObj);
+        addToHistory(resultObj);
       } else {
         // Bulk conversion
         const bulkResults = [];
@@ -243,23 +273,32 @@ const UnifiedConverter = () => {
 
   const activeFormat = overrideFromFormat || detectedFormat;
 
+  const handleSwap = () => {
+    // If we have a detected format (or override), we can swap
+    if (activeFormat) {
+      setOverrideFromFormat(toFormat);
+      setToFormat(activeFormat);
+      setShowFormatOverride(true);
+    }
+  };
+
   return (
     <div className="unified-converter">
-      {/* Control Panel - Left Side */}
+      {/* Sidebar - Control Panel */}
       <div className="control-panel glass-card">
         <div className="panel-header">
           <h2 className="panel-title">
             <span className="panel-icon">🎯</span>
-            Coordinate Converter
+            Coordinates
           </h2>
           <span className={`mode-badge ${mode}`}>
-            {mode === 'single' ? '📍 Single' : '📋 Bulk'}
+            {mode === 'single' ? 'Single Mode' : 'Bulk Mode'}
           </span>
         </div>
 
         {/* Smart Input */}
         <div 
-          className={`smart-input-container ${isDragOver ? 'dragover' : ''}`}
+          className={`smart-input-container ${isDragOver ? 'dragover' : ''} ${error ? 'error' : ''} ${results ? 'success' : ''}`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -267,16 +306,19 @@ const UnifiedConverter = () => {
           <textarea
             className="smart-input"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              setInput(e.target.value);
+              if (error) setError(null);
+              if (results) setResults(null); 
+            }}
             onKeyDown={handleKeyDown}
-            placeholder={"Paste coordinates here (DD, DMS, UTM, MGRS) or drag & drop a file...\n\nExamples:\n38.897, -77.036\n38° 53' 49\" N, 77° 2' 11\" W\n18S 323394 4307395"}
-            rows={mode === 'bulk' ? 8 : 4}
+            placeholder={"Paste coordinates here...\n38.897, -77.036\n18S UQ 1234 5678"}
           />
           
           {isDragOver && (
             <div className="drop-overlay">
               <span className="drop-icon">📂</span>
-              <span>Drop file here</span>
+              <span>Drop file to load</span>
             </div>
           )}
           
@@ -291,41 +333,63 @@ const UnifiedConverter = () => {
           )}
         </div>
 
-        {/* Detection Badge */}
-        <div className="detection-row">
-          {detectedFormat && (
-            <DetectionBadge format={activeFormat} />
-          )}
-          
-          <button 
-            className="override-toggle"
-            onClick={() => setShowFormatOverride(!showFormatOverride)}
-          >
-            {showFormatOverride ? 'Hide options' : 'Change format'}
-          </button>
-        </div>
+        {/* Controls Container */}
+        <div className="format-controls">
+          {/* Detection & Override */}
+          <div className="detection-row">
+            <div className="detection-info">
+              {detectedFormat && <DetectionBadge format={activeFormat} />}
+            </div>
+            
+            <button 
+              className="override-toggle"
+              onClick={() => setShowFormatOverride(!showFormatOverride)}
+            >
+              {showFormatOverride ? 'Auto-detect' : 'Manual Input?'}
+            </button>
+          </div>
 
-        {/* Format Override (hidden by default) */}
-        {showFormatOverride && (
-          <div className="format-override animate-fadeIn">
+          {/* Format Override */}
+          {showFormatOverride && (
+            <div className="format-override animate-fadeIn">
+              <FormatSelector
+                label="Input Format"
+                value={overrideFromFormat || detectedFormat || 'DD'}
+                onChange={setOverrideFromFormat}
+                id="from-format"
+              />
+              {/* Swap Button inside override when visible */}
+              <div style={{ textAlign: 'center', margin: '4px 0' }}>
+                 <button 
+                  className="btn-ghost" 
+                  style={{ padding: '4px' }}
+                  onClick={handleSwap}
+                  title="Swap formats"
+                >
+                  ↓↑
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* To Format Selector */}
+          <div className="output-format">
             <FormatSelector
-              label="From Format"
-              value={overrideFromFormat || detectedFormat || 'DD'}
-              onChange={setOverrideFromFormat}
-              id="from-format"
+              label="Convert To"
+              value={toFormat}
+              onChange={setToFormat}
+              id="to-format"
             />
           </div>
-        )}
-
-        {/* To Format Selector */}
-        <div className="output-format">
-          <FormatSelector
-            label="Convert To"
-            value={toFormat}
-            onChange={setToFormat}
-            id="to-format"
-          />
         </div>
+
+        {/* Error */}
+        {error && (
+          <div className="error-message animate-fadeIn">
+            <span>⚠️</span>
+            {error}
+          </div>
+        )}
 
         {/* Convert Button */}
         <button
@@ -336,67 +400,86 @@ const UnifiedConverter = () => {
           {isProcessing ? (
             <>
               <span className="animate-spin">⏳</span>
-              Converting...
+              Processing...
             </>
           ) : (
             <>
-              Convert {mode === 'bulk' ? `${lines.length} Coordinates` : 'Coordinate'}
+              Convert {mode === 'bulk' ? `(${lines.length})` : ''}
             </>
           )}
         </button>
+      </div>
 
-        {/* Error */}
-        {error && (
-          <div className="error-message animate-fadeIn">
-            <span>⚠️</span>
-            {error}
+      {/* Main View - Map & Results Split */}
+      <div className="main-view">
+        {/* Top: Map Panel */}
+        <div className="map-panel">
+          <MapPreview 
+            coordinates={mapCoordinates}
+            fromFormat={activeFormat}
+            toFormat={toFormat}
+          />
+        </div>
+
+        {/* Bottom: Results Panel */}
+        <div className="results-panel">
+          <div className="results-panel-header">
+            <h3>
+              Results
+            </h3>
+            {results?.type === 'bulk' && (
+              <ExportButton results={results.results} toFormat={toFormat} />
+            )}
           </div>
-        )}
-      </div>
-
-      {/* Results Panel - Middle Section (Scrollable) */}
-      <div className="results-panel">
-        <div className="results-panel-header">
-          <h3>
-            <span>📊</span>
-            Conversion Results
-          </h3>
-          {results?.type === 'bulk' && (
-            <ExportButton results={results.results} toFormat={toFormat} />
-          )}
-        </div>
-        <div className="results-panel-content">
-          {!results ? (
-            <div className="results-panel-empty">
-              <div className="results-panel-empty-icon">📋</div>
-              <div className="results-panel-empty-text">
-                Converted coordinates will appear here
+          
+          <div className="results-panel-content">
+            {isProcessing ? (
+              <div className="skeleton-card" style={{ margin: '20px' }}>
+                <div className="skeleton skeleton-header"></div>
+                <div className="skeleton skeleton-body"></div>
               </div>
-            </div>
-          ) : results.type === 'single' ? (
-            <LocationCard
-              result={results.result}
-              toFormat={toFormat}
-              originalInput={results.original}
-              coordinates={results.coordinates}
-            />
-          ) : (
-            <DataGrid
-              results={results.results}
-              fromFormat={activeFormat}
-              toFormat={toFormat}
-            />
-          )}
+            ) : !results ? (
+              <div className="results-panel-empty">
+                <div className="results-panel-empty-icon">📊</div>
+                <div className="results-panel-empty-text">
+                  Your conversion results will appear here.
+                  <br/>
+                  <span className="text-muted" style={{ fontSize: '0.8em', marginTop: '10px', display: 'block' }}>
+                    Select a format and click Convert.
+                  </span>
+                </div>
+                {/* Simplified History for empty state */}
+                {history.length > 0 && (
+                  <div style={{ marginTop: '20px', width: '100%', maxWidth: '300px' }}>
+                     <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: '10px' }}>Recent</h4>
+                     <HistoryList 
+                      history={history} 
+                      onSelect={(item) => {
+                        setInput(item.original);
+                        setToFormat(item.toFormat);
+                      }} 
+                    />
+                  </div>
+                )}
+              </div>
+            ) : results.type === 'single' ? (
+              <div style={{ padding: '20px' }}>
+                <LocationCard
+                  result={results.result}
+                  toFormat={toFormat}
+                  originalInput={results.original}
+                  coordinates={results.coordinates}
+                />
+              </div>
+            ) : (
+              <DataGrid
+                results={results.results}
+                fromFormat={activeFormat}
+                toFormat={toFormat}
+              />
+            )}
+          </div>
         </div>
-      </div>
-
-      {/* Map Preview - Right Side */}
-      <div className="map-panel glass-card">
-        <MapPreview 
-          coordinates={mapCoordinates}
-          fromFormat={activeFormat}
-          toFormat={toFormat}
-        />
       </div>
     </div>
   );

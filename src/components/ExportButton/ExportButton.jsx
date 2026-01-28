@@ -21,7 +21,8 @@ const ExportButton = ({ results, toFormat }) => {
   const successfulResults = results.filter(r => r.success);
 
   const downloadFile = (content, filename, type) => {
-    const blob = new Blob([content], { type });
+    // Add BOM for Excel to recognize UTF-8
+    const blob = new Blob(['\uFEFF' + content], { type: `${type};charset=utf-8;` });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -34,12 +35,52 @@ const ExportButton = ({ results, toFormat }) => {
   };
 
   const exportCSV = () => {
-    const headers = ['Original', 'Converted', 'Status'];
-    const rows = results.map(r => [
-      `"${r.original}"`,
-      `"${r.converted || ''}"`,
-      r.success ? 'Valid' : 'Error'
-    ]);
+    // Define headers based on output format
+    let convertedHeaders = ['Converted'];
+    switch (toFormat) {
+      case 'DD':
+      case 'DMS':
+      case 'DDM':
+        convertedHeaders = ['Converted Lat', 'Converted Lng'];
+        break;
+      case 'UTM':
+        convertedHeaders = ['Zone/Hemisphere', 'Easting', 'Northing'];
+        break;
+      case 'MGRS':
+        convertedHeaders = ['Grid Zone', 'Easting', 'Northing'];
+        break;
+    }
+
+    const headers = ['Original Input', 'Latitude', 'Longitude', ...convertedHeaders, 'Status'];
+    
+    // Helper to escape CSV fields
+    const escapeCsv = (field) => {
+      if (field === null || field === undefined) return '';
+      const stringField = String(field);
+      if (stringField.includes(',') || stringField.includes('"') || stringField.includes('\n')) {
+        return `"${stringField.replace(/"/g, '""')}"`;
+      }
+      return stringField;
+    };
+
+    const rows = results.map(r => {
+      // Split converted result by tab if it exists
+      const convertedParts = r.converted ? r.converted.split('\t') : [];
+      
+      // Pad with empty strings if parts are missing compared to headers
+      while (convertedParts.length < convertedHeaders.length) {
+        convertedParts.push('');
+      }
+
+      return [
+        escapeCsv(r.original),
+        r.latLng ? r.latLng.lat : '',
+        r.latLng ? r.latLng.lng : '',
+        ...convertedParts.map(escapeCsv),
+        r.success ? 'Valid' : 'Error'
+      ];
+    });
+    
     const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
     downloadFile(csv, `coordinates_${toFormat}.csv`, 'text/csv');
   };
