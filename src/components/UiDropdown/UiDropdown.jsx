@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import './UiDropdown.css';
+import { ChevronDown, Check } from 'lucide-react';
 
 const UiDropdown = ({ 
   label, 
@@ -56,19 +57,7 @@ const UiDropdown = ({
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         
-        <svg 
-          className="ui-dropdown-arrow" 
-          width="20" 
-          height="20" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2" 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-        >
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
+        <ChevronDown className="ui-dropdown-arrow" size={20} />
       </div>
 
       {isOpen && (
@@ -81,7 +70,7 @@ const UiDropdown = ({
             >
               <span>{option.label}</span>
               {option.value === value && (
-                <span className="option-check">✓</span>
+                <span className="option-check"><Check size={16} /></span>
               )}
             </div>
           ))}

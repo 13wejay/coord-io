@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import './LocationCard.css';
+import { MapPin, Check, Copy, Map, Share2 } from 'lucide-react';
 
 const LocationCard = ({ 
   result, 
   toFormat, 
-  originalInput,
   coordinates 
 }) => {
   const [copied, setCopied] = useState(false);
@@ -54,7 +54,7 @@ const LocationCard = ({
             `https://www.google.com/maps?q=${coordinates.lat},${coordinates.lng}` : 
             undefined,
         });
-      } catch (err) {
+      } catch {
         // User cancelled or share failed
         console.log('Share cancelled');
       }
@@ -67,7 +67,7 @@ const LocationCard = ({
   return (
     <div className="location-card glass-card">
       <div className="location-card-header">
-        <span className="location-card-icon">📍</span>
+        <span className="location-card-icon"><MapPin size={18} /></span>
         <span className="location-card-format">
           {formatNames[toFormat] || toFormat}
         </span>
@@ -82,7 +82,7 @@ const LocationCard = ({
           className={`action-btn ${copied ? 'success' : ''}`}
           onClick={handleCopy}
         >
-          {copied ? '✓ Copied' : '📋 Copy'}
+          {copied ? <><Check size={16} /> Copied</> : <><Copy size={16} /> Copy</>}
         </button>
         
         {coordinates && (
@@ -90,7 +90,7 @@ const LocationCard = ({
             className="action-btn"
             onClick={handleOpenGoogleMaps}
           >
-            🗺️ Google Maps
+            <Map size={16} /> Google Maps
           </button>
         )}
         
@@ -98,7 +98,7 @@ const LocationCard = ({
           className="action-btn"
           onClick={handleShare}
         >
-          🔗 Share
+          <Share2 size={16} /> Share
         </button>
       </div>
     </div>

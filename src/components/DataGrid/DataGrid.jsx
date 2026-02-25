@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import './DataGrid.css';
+import { CheckCircle2, XCircle } from 'lucide-react';
 
 const DataGrid = ({ 
   results, 
@@ -24,12 +25,12 @@ const DataGrid = ({
             <span className="stat-value">{stats.total}</span> total
           </span>
           <span className="stat success">
-            <span className="stat-icon">🟢</span>
+            <span className="stat-icon"><CheckCircle2 size={16} /></span>
             <span className="stat-value">{stats.successful}</span> valid
           </span>
           {stats.failed > 0 && (
             <span className="stat error">
-              <span className="stat-icon">🔴</span>
+              <span className="stat-icon"><XCircle size={16} /></span>
               <span className="stat-value">{stats.failed}</span> errors
             </span>
           )}
@@ -58,7 +59,7 @@ const DataGrid = ({
                     className={`status-indicator ${row.success ? 'success' : 'error'}`}
                     title={row.error || 'Valid'}
                   >
-                    {row.success ? '🟢' : '🔴'}
+                    {row.success ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
                   </span>
                 </td>
                 <td className="col-row">{index + 1}</td>

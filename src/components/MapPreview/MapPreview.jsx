@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './MapPreview.css';
+import { Globe } from 'lucide-react';
 
 // Fix for default marker icons in Leaflet with bundlers
 delete L.Icon.Default.prototype._getIconUrl;
@@ -58,7 +59,7 @@ const MapController = ({ coordinates, zoom }) => {
   return null;
 };
 
-const MapPreview = ({ coordinates = [], fromFormat, toFormat }) => {
+const MapPreview = ({ coordinates = [] }) => {
   const mapRef = useRef(null);
   const customIcon = useMemo(() => createCustomIcon(), []);
   
@@ -128,7 +129,7 @@ const MapPreview = ({ coordinates = [], fromFormat, toFormat }) => {
       {/* Overlay when no coordinates */}
       {validCoords.length === 0 && (
         <div className="map-overlay">
-          <div className="map-overlay-icon">🌍</div>
+          <div className="map-overlay-icon"><Globe size={48} strokeWidth={1} /></div>
           <div className="map-overlay-text">
             Enter coordinates to see them on the map
           </div>

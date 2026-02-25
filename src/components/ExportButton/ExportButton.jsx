@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import './ExportButton.css';
+import { Download, ChevronDown, FileText, FileJson, Globe } from 'lucide-react';
 
 const ExportButton = ({ results, toFormat }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -138,29 +139,29 @@ const ExportButton = ({ results, toFormat }) => {
         className="btn btn-secondary export-trigger"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span>📥</span>
+        <Download size={18} />
         Export
-        <span className={`chevron ${isOpen ? 'open' : ''}`}>▼</span>
+        <ChevronDown size={16} className={`chevron ${isOpen ? 'open' : ''}`} />
       </button>
 
       {isOpen && (
         <div className="export-dropdown glass-card">
           <button className="export-option" onClick={exportCSV}>
-            <span className="export-icon">📄</span>
+            <span className="export-icon"><FileText size={18} /></span>
             <div className="export-details">
               <span className="export-format">CSV</span>
               <span className="export-desc">Excel compatible</span>
             </div>
           </button>
           <button className="export-option" onClick={exportJSON}>
-            <span className="export-icon">📋</span>
+            <span className="export-icon"><FileJson size={18} /></span>
             <div className="export-details">
               <span className="export-format">JSON</span>
               <span className="export-desc">Developer friendly</span>
             </div>
           </button>
           <button className="export-option" onClick={exportKML}>
-            <span className="export-icon">🌍</span>
+            <span className="export-icon"><Globe size={18} /></span>
             <div className="export-details">
               <span className="export-format">KML</span>
               <span className="export-desc">Google Earth</span>

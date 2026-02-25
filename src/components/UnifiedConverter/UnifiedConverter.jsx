@@ -9,7 +9,6 @@ import {
   utmToDD,
   mgrsToDD
 } from '../../utils/coordinateUtils';
-import { parsePastedContent } from '../../utils/fileParser';
 import MapPreview from '../MapPreview/MapPreview';
 import DetectionBadge from '../DetectionBadge/DetectionBadge';
 import LocationCard from '../LocationCard/LocationCard';
@@ -17,6 +16,7 @@ import DataGrid from '../DataGrid/DataGrid';
 import ExportButton from '../ExportButton/ExportButton';
 import FormatSelector from '../FormatSelector/FormatSelector';
 import HistoryList from '../HistoryList/HistoryList';
+import { Target, FolderOpen, AlertCircle, Loader2, BarChart2 } from 'lucide-react';
 import './UnifiedConverter.css';
 
 const UnifiedConverter = () => {
@@ -199,7 +199,7 @@ const UnifiedConverter = () => {
                 case 'MGRS': parsed = mgrsToDD(trimmedLine); break;
               }
               if (parsed) latLng = { lat: parsed.lat, lng: parsed.lng };
-            } catch {}
+            } catch { /* ignore parsing errors */ }
             
             bulkResults.push({
               original: trimmedLine,
@@ -227,7 +227,7 @@ const UnifiedConverter = () => {
     } finally {
       setIsProcessing(false);
     }
-  }, [input, detectedFormat, overrideFromFormat, toFormat, mode, lines, mapCoordinates]);
+  }, [input, detectedFormat, overrideFromFormat, toFormat, mode, lines, mapCoordinates, addToHistory]);
 
   // Handle file drop
   const handleDrop = useCallback((e) => {
@@ -288,7 +288,7 @@ const UnifiedConverter = () => {
       <div className="control-panel glass-card">
         <div className="panel-header">
           <h2 className="panel-title">
-            <span className="panel-icon">🎯</span>
+            <span className="panel-icon"><Target size={20} /></span>
             Coordinates
           </h2>
           <span className={`mode-badge ${mode}`}>
@@ -317,7 +317,7 @@ const UnifiedConverter = () => {
           
           {isDragOver && (
             <div className="drop-overlay">
-              <span className="drop-icon">📂</span>
+              <span className="drop-icon"><FolderOpen size={32} /></span>
               <span>Drop file to load</span>
             </div>
           )}
@@ -331,6 +331,11 @@ const UnifiedConverter = () => {
               ✕
             </button>
           )}
+        </div>
+
+        {/* Input Disclaimer */}
+        <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '-8px', marginBottom: '8px', textAlign: 'center' }}>
+          * Disclaimer: Make sure copied coordinates are in <strong>Lat, Lon</strong> order
         </div>
 
         {/* Controls Container */}
@@ -386,7 +391,7 @@ const UnifiedConverter = () => {
         {/* Error */}
         {error && (
           <div className="error-message animate-fadeIn">
-            <span>⚠️</span>
+            <AlertCircle size={16} className="error-icon" />
             {error}
           </div>
         )}
@@ -399,7 +404,7 @@ const UnifiedConverter = () => {
         >
           {isProcessing ? (
             <>
-              <span className="animate-spin">⏳</span>
+              <Loader2 size={18} className="animate-spin" />
               Processing...
             </>
           ) : (
@@ -440,7 +445,7 @@ const UnifiedConverter = () => {
               </div>
             ) : !results ? (
               <div className="results-panel-empty">
-                <div className="results-panel-empty-icon">📊</div>
+                <div className="results-panel-empty-icon"><BarChart2 size={48} strokeWidth={1} /></div>
                 <div className="results-panel-empty-text">
                   Your conversion results will appear here.
                   <br/>
